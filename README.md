@@ -1,4 +1,4 @@
-# FitDetect: Outfit Detection/Recommendation Engine
+# TRENDCHECK: Outfit Detection/Recommendation Engine
 
 Web app and fashion detection/recommendation engine that leverages deep learning, computer vision, and LLM's to provide outfit recommendations. Application uses a YOLOv8 object detection model trained to identify clothing on a user either through their webcam or a user-uploaded photo. Then feeds detected outfit to OpenAI's gpt-4o-mini LLM to provide recommendations to improve the user's style. Check out deployed website here: https://fitdetect.netlify.app/
 
