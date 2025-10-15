@@ -4,11 +4,12 @@ import PropTypes from 'prop-types';
 import "../css/VideoStream.css" 
 
 function VideoStream(props) {
-    const [vidDeviceId, setVidDeviceId, setRecText, setCameraErr] = [
+    const [vidDeviceId, setVidDeviceId, setRecText, setCameraErr, setRating] = [
         props.vidDeviceId, 
         props.setVidDeviceId, 
         props.setRecText, 
-        props.setCameraErr
+        props.setCameraErr,
+        props.setRating // <-- add this
     ];
 
     const [displaying, setDisplaying] = useState(false);
@@ -27,7 +28,8 @@ function VideoStream(props) {
 
         const video = videoRef.current;
         const canvas = canvasRef.current;
-        socketRef.current = new WebSocket("wss://outfit-detect-recs-production.up.railway.app/webcam/");
+        const ws = new WebSocket('ws://localhost:8000/webcam/');
+        socketRef.current = ws;
         
         startDetections(video, canvas);
     }, [])
@@ -104,12 +106,18 @@ function VideoStream(props) {
         
         socketRef.current.addEventListener('message', (m) => {
             if (typeof m.data == "string") {
-                if (m.data !== "Detections completed.") {
+                if (m.data === "Detections completed.") {
                     setDetectionsCompleted(true);
+                } else if (m.data.startsWith('- **')) {
                     setRecText(m.data);
-                    socketRef.current.close();
+                } else if (m.data.startsWith('{') && m.data.includes('style_score')) {
+                    try {
+                        const ratingObj = JSON.parse(m.data);
+                        setRating(ratingObj);
+                    } catch (e) {
+                        setRating(null);
+                    }
                 }
-
             } else {
                 displayDetections(video, canvas, m.data);                
             }

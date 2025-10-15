@@ -80,6 +80,25 @@ body {
     transition: transform 0.1s ease-in; 
 }
 
+.rating-box {
+  background: #f8f9fa;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.rating-box h2 {
+  margin-top: 0;
+  color: #2d3748;
+}
+
+.rating-box p {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
 /* Media queries */
 @media all and (max-width: 1000px) {
     .home {

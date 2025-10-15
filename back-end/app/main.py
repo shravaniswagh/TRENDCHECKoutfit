@@ -3,8 +3,9 @@ from dotenv import load_dotenv
 from contextlib import asynccontextmanager
 import asyncio
 from io import BytesIO
+import json
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, File
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, File, UploadFile
 from fastapi.websockets import WebSocketState
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
@@ -19,6 +20,7 @@ from ultralytics import YOLO
 import supervision as sv
 
 from openai import OpenAI
+from .fashion_rater import rate_outfit, class_names
 
 # Initializing app
 @asynccontextmanager
@@ -39,8 +41,7 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 origins = [
     "http://localhost:5173/",
     "http://localhost:5173",
-    "https://fitdetect.netlify.app/",
-    "https://fitdetect.netlify.app"
+    
 ]
 
 app.add_middleware(
@@ -253,6 +254,20 @@ async def use_model_webcam(websocket: WebSocket, queue: asyncio.Queue, detection
                     recs = get_recs(detections_dict)
                     await websocket.send_text(recs)
 
+                    # --- Fashion rating logic ---
+                    # Get detected class names
+                    detected_class_names = [
+                        obj_name for obj_name in detections_dict.keys()
+                        if obj_name in class_names.values()
+                    ]
+                    # Map class names to class IDs
+                    name_to_id = {v: k for k, v in class_names.items()}
+                    detected_class_ids = [name_to_id[name] for name in detected_class_names if name in name_to_id]
+                    rating = rate_outfit(detected_class_ids)
+                    import json
+                    await websocket.send_text(json.dumps(rating))
+                    # ---------------------------
+
                 socket_open = False
 
         if socket_open:
@@ -385,6 +400,18 @@ async def use_photo_detection(file: bytes=File(...)):
         text = "- **Multiple outfits detected**: Photo can only contain one outfit in it to ensure accurate results."
         
     finally : return {"text": text}
+
+
+@app.post("/detect")
+async def detect_outfit(image: UploadFile = File(...)):
+    # TODO: Replace this with your actual detection logic for the uploaded image
+    # For now, let's use dummy detected class IDs
+    detected_class_ids = [2, 9]  # Example: "long sleeve top" and "skirt"
+    rating = rate_outfit(detected_class_ids)
+    return {
+        "detected_items": detected_class_ids,
+        "rating": rating
+    }
 
 
 if __name__ == '__main__':

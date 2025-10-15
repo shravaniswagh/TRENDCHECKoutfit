@@ -18,11 +18,11 @@ function App() {
       {/* Home page */}
       {!useCamera && !usePhoto &&
         <div className='home'>
-          <h1 className='app-title'>FitDetect</h1>
+          <h1 className='app-title'><b>TRENDCHECK</b></h1>
           <h3 className='app-desc'>Outfit Detection/Recommendation Engine</h3>
 
-          <p className='credits'>Project by Joe Anderson <a href="https://github.com/jjoej15" target="_blank"><img src={githubLogo} className='github-logo' alt='github logo' /></a>. 
-          Source code located <a href="https://github.com/jjoej15/outfit-detect-recs" target="_blank">here</a>.</p>
+          <p className='credits'><b>Project by Shravani Wagh (23FE10CSE00088)</b><a href="https://github.com/shravaniswagh" target="_blank"><img src={githubLogo} className='github-logo' alt='github logo' /></a>. 
+          Source code located <a href="" target="_blank">here</a>.</p>
 
           <p className='app-details'>
             Get recommendations for your outfit using your webcam or an uploaded photo.

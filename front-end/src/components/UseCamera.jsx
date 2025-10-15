@@ -5,7 +5,7 @@ import { nanoid } from 'nanoid';
 import VideoStream from "./VideoStream";
 import circleExclamationPng from '../assets/circle-exclamation.png';
 
-import '../css/UseCamera.css'
+import '../css/App.css'; // or './UseCamera.css' if you put it there
 
 function UseCamera(props) {
     const setUseCamera = props.setUseCamera;
@@ -16,6 +16,7 @@ function UseCamera(props) {
     const [recs, setRecs] = useState();
     const [noCamera, setNoCamera] = useState(false);
     const [cameraErr, setCameraErr] = useState(false);
+    const [rating, setRating] = useState(null);
 
     const typewriteIntervalId = useRef(null);
 
@@ -133,7 +134,13 @@ function UseCamera(props) {
             }
 
             {vidDeviceId && 
-                <VideoStream vidDeviceId={vidDeviceId} setVidDeviceId={setVidDeviceId} setRecText={setRecText} setCameraErr={setCameraErr} />
+              <VideoStream 
+                vidDeviceId={vidDeviceId} 
+                setVidDeviceId={setVidDeviceId} 
+                setRecText={setRecText} 
+                setCameraErr={setCameraErr}
+                setRating={setRating}
+              />
             }  
 
             {cameraErr && // Screen that appears when camera can't pick up video
@@ -164,6 +171,16 @@ function UseCamera(props) {
                         )}
                     </ul>
                 </div>
+            }
+
+            {rating &&
+              <div className="rating-box">
+                <h2>Outfit Rating</h2>
+                <p><strong>Style Score:</strong> {rating.style_score}</p>
+                <p><strong>Season:</strong> {rating.season}</p>
+                <p><strong>Trendiness:</strong> {rating.trendiness}</p>
+                <p><strong>Comment:</strong> {rating.comment}</p>
+              </div>
             }
 
             {recs && <button className='btn' id="use-camera-btn" onClick={startOver}>Use Camera Again</button>}         
